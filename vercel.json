@@ -2,21 +2,23 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "main.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/docs/(.*)",
+      "dest": "index.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "index.js"
     }
   ],
-  "env": {
-    "MONGO_URI": "@mongo_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "CLOUDINARY_CLOUD_NAME": "@cloudinary_cloud_name",
-    "CLOUDINARY_API_KEY": "@cloudinary_api_key",
-    "CLOUDINARY_API_SECRET": "@cloudinary_api_secret"
+  "functions": {
+    "index.js": {
+      "includeFiles": "node_modules/swagger-ui-dist/**"
+    }
   }
 }
