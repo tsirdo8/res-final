@@ -1,4 +1,5 @@
-onst express = require('express');
+// index.js
+const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const connectDB = require('./DB/db');
@@ -43,11 +44,3 @@ app.get("/", (req, res) => {
 // IMPORTANT: For Vercel, you should export the app instance.
 // Vercel handles the server listening internally.
 module.exports = app;
-
-// Optionally, keep app.listen for local development if you prefer,
-// but it's not strictly necessary when exporting 'app' for Vercel.
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-//     console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
-// });
