@@ -1,7 +1,6 @@
-
-const express = require('express');
+onst express = require('express');
 const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc'); // swagger-jsdoc იმპორტი
+const swaggerJsdoc = require('swagger-jsdoc');
 const connectDB = require('./DB/db');
 const postRouter = require('./routes/post.route');
 const userRouter = require('./routes/user.route');
@@ -9,18 +8,19 @@ const isAuth = require('./middlewares/isAuth.middleware');
 const authRouter = require('./auth/auth.route');
 require('dotenv').config();
 
-const app = express();
+const app = express(); // Express აპლიკაციის ინსტანცია
 
 // Swagger JSDoc ოფციები
 const swaggerOptions = {
-    swaggerDefinition: require('./swaggerDef'), // JSDoc დეფინიციები
-    apis: ['./routes/*.js', './auth/*.js'], // ფაილები, სადაც JSDoc კომენტარებია
+    swaggerDefinition: require('./swaggerDef'),
+    // მიუთითეთ ფაილები, სადაც Swagger-ის JSDoc კომენტარებია
+    apis: ['./auth/*.js', './routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // შუალედური პროგრამები (Middleware)
-app.use(express.json());
+app.use(express.json()); // JSON მოთხოვნის სხეულის დასამუშავებლად
 
 // ავთენტიფიკაციის მარშრუტები (არ საჭიროებს isAuth-ს)
 app.use('/auth', authRouter);
@@ -40,9 +40,14 @@ app.get("/", (req, res) => {
     res.send("Hello World! თქვენი ბლოგის API მუშაობს.");
 });
 
-// სერვერის გაშვება
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`სერვერი გაშვებულია პორტზე ${PORT}`);
-    console.log(`Swagger docs ხელმისაწვდომია: http://localhost:${PORT}/api-docs`);
-});
+// IMPORTANT: For Vercel, you should export the app instance.
+// Vercel handles the server listening internally.
+module.exports = app;
+
+// Optionally, keep app.listen for local development if you prefer,
+// but it's not strictly necessary when exporting 'app' for Vercel.
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+//     console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+// });
