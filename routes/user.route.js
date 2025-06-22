@@ -1,4 +1,3 @@
-// routes/user.route.js
 const { Router } = require("express");
 const userModel = require("../models/user.model");
 const postModel = require("../models/post.model"); // საჭიროა პოსტების კასკადური წაშლისთვის
@@ -10,46 +9,46 @@ const userRouter = Router();
 /**
  * @swagger
  * /users:
- * get:
- * security:
- * - bearerAuth: []
- * tags:
- * - მომხმარებლები
- * summary: ყველა მომხმარებლის მიღება
- * responses:
- * 200:
- * description: მომხმარებლების სია
- * content:
- * application/json:
- * schema:
- * type: array
- * items:
- * $ref: '#/components/schemas/User'
- * 401:
- * description: არავტორიზებული
- * 500:
- * description: სერვერის შეცდომა
- * put:
- * security:
- * - bearerAuth: []
- * tags:
- * - მომხმარებლები
- * summary: ავთენტიფიცირებული მომხმარებლის პროფილის განახლება (ელფოსტა, სრული სახელი, ავატარი)
- * requestBody:
- * required: true
- * content:
- * multipart/form-data:
- * schema:
- * $ref: '#/components/schemas/UserUpdate'
- * responses:
- * 200:
- * description: მომხმარებელი წარმატებით განახლდა
- * 401:
- * description: არავტორიზებული
- * 404:
- * description: მომხმარებელი ვერ მოიძებნა
- * 500:
- * description: სერვერის შეცდომა
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - მომხმარებლები
+ *     summary: ყველა მომხმარებლის მიღება
+ *     responses:
+ *       200:
+ *         description: მომხმარებლების სია
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       401:
+ *         description: არავტორიზებული
+ *       500:
+ *         description: სერვერის შეცდომა
+ *   put:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - მომხმარებლები
+ *     summary: ავთენტიფიცირებული მომხმარებლის პროფილის განახლება (ელფოსტა, სრული სახელი, ავატარი)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/UserUpdate'
+ *     responses:
+ *       200:
+ *         description: მომხმარებელი წარმატებით განახლდა
+ *       401:
+ *         description: არავტორიზებული
+ *       404:
+ *         description: მომხმარებელი ვერ მოიძებნა
+ *       500:
+ *         description: სერვერის შეცდომა
  */
 userRouter.get('/', async (req, res) => {
     try {
@@ -99,64 +98,63 @@ userRouter.put('/', upload.single('avatar'), async (req, res) => {
     }
 });
 
-
 /**
  * @swagger
  * /users/{id}:
- * get:
- * security:
- * - bearerAuth: []
- * tags:
- * - მომხმარებლები
- * summary: კონკრეტული მომხმარებლის მიღება ID-ის მიხედვით
- * parameters:
- * - name: id
- * in: path
- * required: true
- * schema:
- * type: string
- * description: მომხმარებლის ID
- * responses:
- * 200:
- * description: მომხმარებლის დეტალები
- * content:
- * application/json:
- * schema:
- * $ref: '#/components/schemas/User'
- * 400:
- * description: არასწორი ID
- * 401:
- * description: არავტორიზებული
- * 404:
- * description: მომხმარებელი ვერ მოიძებნა
- * 500:
- * description: სერვერის შეცდომა
- * delete:
- * security:
- * - bearerAuth: []
- * tags:
- * - მომხმარებლები
- * summary: მომხმარებლის წაშლა (ადმინისტრატორის ან საკუთარი თავის წაშლა)
- * parameters:
- * - name: id
- * in: path
- * required: true
- * schema:
- * type: string
- * description: მომხმარებლის ID, რომელიც უნდა წაიშალოს
- * responses:
- * 200:
- * description: მომხმარებელი და მისი პოსტები წარმატებით წაიშალა.
- * 400:
- * description: არასწორი ID
- * 401:
- * description: არავტორიზებული
- * 403:
- * description: არ გაქვთ ნებართვა
- * 404:
- * description: მომხმარებელი ვერ მოიძებნა
- * 500:
- * description: სერვერის შეცდომა
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - მომხმარებლები
+ *     summary: კონკრეტული მომხმარებლის მიღება ID-ის მიხედვით
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: მომხმარებლის ID
+ *     responses:
+ *       200:
+ *         description: მომხმარებლის დეტალები
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: არასწორი ID
+ *       401:
+ *         description: არავტორიზებული
+ *       404:
+ *         description: მომხმარებელი ვერ მოიძებნა
+ *       500:
+ *         description: სერვერის შეცდომა
+ *   delete:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - მომხმარებლები
+ *     summary: მომხმარებლის წაშლა (ადმინისტრატორის ან საკუთარი თავის წაშლა)
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: მომხმარებლის ID, რომელიც უნდა წაიშალოს
+ *     responses:
+ *       200:
+ *         description: მომხმარებელი და მისი პოსტები წარმატებით წაიშალა.
+ *       400:
+ *         description: არასწორი ID
+ *       401:
+ *         description: არავტორიზებული
+ *       403:
+ *         description: არ გაქვთ ნებართვა
+ *       404:
+ *         description: მომხმარებელი ვერ მოიძებნა
+ *       500:
+ *         description: სერვერის შეცდომა
  */
 userRouter.get('/:id', async (req, res) => {
     const { id } = req.params;

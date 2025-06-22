@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -9,38 +8,65 @@ const isAuth = require('./middlewares/isAuth.middleware');
 const authRouter = require('./auth/auth.route');
 require('dotenv').config();
 
-const app = express(); // Express აპლიკაციის ინსტანცია
+const app = express();
 
-// Swagger JSDoc ოფციები
+// Base Swagger definition
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'ბლოგის API',
+    version: '1.0.0',
+    description: 'მარტივი ბლოგის API მომხმარებლის ავთენტიფიკაციით, პოსტების მართვით და სურათების ატვირთვით.',
+  },
+  servers: [
+    {
+      url: 'http://localhost:3000',
+      description: 'დეველოპმენტის სერვერი',
+    },
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+    },
+  },
+};
+
+// Swagger JSDoc options
 const swaggerOptions = {
-    swaggerDefinition: require('./swaggerDef'),
-    // მიუთითეთ ფაილები, სადაც Swagger-ის JSDoc კომენტარებია
-    apis: ['./auth/*.js', './routes/*.js'],
+  swaggerDefinition,
+  apis: [
+    './auth/auth.route.js',
+    './routes/post.route.js', 
+    './routes/user.route.js'
+  ],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-// შუალედური პროგრამები (Middleware)
-app.use(express.json()); // JSON მოთხოვნის სხეულის დასამუშავებლად
+// Middleware
+app.use(express.json());
 
-// ავთენტიფიკაციის მარშრუტები (არ საჭიროებს isAuth-ს)
+// Routes
 app.use('/auth', authRouter);
-
-// ავტორიზაციის შუალედური პროგრამის გამოყენება იმ მარშრუტებზე, რომლებიც ავთენტიფიკაციას საჭიროებენ
 app.use('/users', isAuth, userRouter);
 app.use('/posts', isAuth, postRouter);
 
-// Swagger დოკუმენტაციის მარშრუტი
+// Swagger documentation route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// MongoDB-სთან დაკავშირება
+// Database connection
 connectDB();
 
-// ძირითადი root მარშრუტი
+// Root route
 app.get("/", (req, res) => {
-    res.send("Hello World! თქვენი ბლოგის API მუშაობს.");
+  res.send("Hello World! თქვენი ბლოგის API მუშაობს.");
 });
 
-// IMPORTANT: For Vercel, you should export the app instance.
-// Vercel handles the server listening internally.
+app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server is running on port ${process.env.PORT || 3000}`);
+    });
 module.exports = app;

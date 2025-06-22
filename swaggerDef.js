@@ -426,7 +426,7 @@ module.exports = {
             schema: {
               type: 'string',
             },
-            description: 'მომხმარებლის ID',
+            description: 'მომხმარებლის ID',                                                           
           },
         ],
         responses: {
