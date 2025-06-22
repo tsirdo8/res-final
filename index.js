@@ -10,35 +10,14 @@ require('dotenv').config();
 
 const app = express();
 
-// Base Swagger definition
-const swaggerDefinition = {
-  openapi: '3.0.0',
-  info: {
-    title: 'ბლოგის API',
-    version: '1.0.0',
-    description: 'მარტივი ბლოგის API მომხმარებლის ავთენტიფიკაციით, პოსტების მართვით და სურათების ატვირთვით.',
-  },
-  servers: [
-    {
-      url: 'http://localhost:3000',
-      description: 'დეველოპმენტის სერვერი',
-    },
-  ],
-  components: {
-    securitySchemes: {
-      bearerAuth: {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-      },
-    },
-  },
-};
 
-// Swagger JSDoc options
+const fullSwaggerDefinition = require('./swaggerDef');
+
+
 const swaggerOptions = {
-  swaggerDefinition,
+  swaggerDefinition: fullSwaggerDefinition, 
   apis: [
+   
     './auth/auth.route.js',
     './routes/post.route.js', 
     './routes/user.route.js'
@@ -68,5 +47,6 @@ app.get("/", (req, res) => {
 
 app.listen(process.env.PORT || 3000, () => {
     console.log(`Server is running on port ${process.env.PORT || 3000}`);
-    });
+});
+
 module.exports = app;

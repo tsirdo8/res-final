@@ -1,8 +1,8 @@
 const { Router } = require("express");
 const userModel = require("../models/user.model");
-const postModel = require("../models/post.model"); // საჭიროა პოსტების კასკადური წაშლისთვის
+const postModel = require("../models/post.model"); 
 const { upload, deleteFromCloudinary } = require("../config/cloudinary.config");
-const { isValidObjectId } = require("mongoose"); // ObjectId ვალიდაციისთვის
+const { isValidObjectId } = require("mongoose");
 
 const userRouter = Router();
 
@@ -52,7 +52,7 @@ const userRouter = Router();
  */
 userRouter.get('/', async (req, res) => {
     try {
-        // პაროლის ველის გამორიცხვა
+        
         const users = await userModel.find().sort({ _id: -1 }).select('-password');
         res.status(200).json(users);
     } catch (error) {
@@ -62,31 +62,29 @@ userRouter.get('/', async (req, res) => {
 });
 
 userRouter.put('/', upload.single('avatar'), async (req, res) => {
-    const userId = req.userId; // ავთენტიფიცირებული მომხმარებლის ID
+    const userId = req.userId; 
     const { email, fullName } = req.body;
-    const filePath = req.file ? req.file.path : null; // ატვირთული ფაილის გზა Cloudinary-დან
-
+    const filePath = req.file ? req.file.path : null; 
     try {
         const user = await userModel.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'მომხმარებელი ვერ მოიძებნა.' });
         }
 
-        const updateFields = {}; // განახლების ველების ობიექტი
+        const updateFields = {}; 
         if (email) updateFields.email = email;
         if (fullName) updateFields.fullName = fullName;
 
         if (filePath) {
-            // თუ ძველი ავატარი არსებობს, წაშალეთ იგი Cloudinary-დან
+           
             if (user.avatar) {
-                // public ID-ის ამოღება Cloudinary URL-დან
                 const publicIdMatch = user.avatar.match(/\/blog-app-uploads\/([^.]+)/);
                 if (publicIdMatch && publicIdMatch[1]) {
                     const publicId = `blog-app-uploads/${publicIdMatch[1]}`;
                     await deleteFromCloudinary(publicId);
                 }
             }
-            updateFields.avatar = filePath; // ახალი ავატარის URL
+            updateFields.avatar = filePath; 
         }
 
         await userModel.findByIdAndUpdate(userId, updateFields, { new: true });
@@ -159,13 +157,13 @@ userRouter.put('/', upload.single('avatar'), async (req, res) => {
 userRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
 
-    // შემოწმება, არის თუ არა ID ვალიდური ObjectId
+   
     if (!isValidObjectId(id)) {
         return res.status(400).json({ message: "მომხმარებლის ID არასწორია." });
     }
 
     try {
-        // მომხმარებლის პოვნა ID-ის მიხედვით, პაროლის გამორიცხვა
+     
         const user = await userModel.findById(id).select('-password');
         if (!user) {
             return res.status(404).json({ message: 'მომხმარებელი ვერ მოიძებნა.' });
@@ -178,17 +176,17 @@ userRouter.get('/:id', async (req, res) => {
 });
 
 userRouter.delete('/:id', async (req, res) => {
-    const targetUserId = req.params.id; // წასაშლელი მომხმარებლის ID
-    const userId = req.userId; // ავთენტიფიცირებული მომხმარებლის ID
-    const userRole = req.role; // ავთენტიფიცირებული მომხმარებლის როლი
+    const targetUserId = req.params.id; 
+    const userId = req.userId; 
+    const userRole = req.role; 
 
-    // შემოწმება, არის თუ არა ID ვალიდური ObjectId
+
     if (!isValidObjectId(targetUserId)) {
         return res.status(400).json({ message: "მომხმარებლის ID არასწორია." });
     }
 
     try {
-        // შემოწმება, არის თუ არა ავთენტიფიცირებული მომხმარებელი ადმინისტრატორი ან თავად წაშლის საკუთარ ანგარიშს
+       
         if (userRole !== 'admin' && targetUserId !== userId) {
             return res.status(403).json({ message: "თქვენ არ გაქვთ ნებართვა ამ მომხმარებლის წასაშლელად." });
         }
@@ -198,7 +196,7 @@ userRouter.delete('/:id', async (req, res) => {
             return res.status(404).json({ message: 'მომხმარებელი ვერ მოიძებნა.' });
         }
 
-        // მომხმარებლის ავატარის წაშლა Cloudinary-დან, თუ ის არსებობს
+       
         if (userToDelete.avatar) {
             const publicIdMatch = userToDelete.avatar.match(/\/blog-app-uploads\/([^.]+)/);
             if (publicIdMatch && publicIdMatch[1]) {
@@ -207,10 +205,9 @@ userRouter.delete('/:id', async (req, res) => {
             }
         }
 
-        // წაშლილი მომხმარებლის ყველა პოსტის წაშლა
         const postsToDelete = await postModel.find({ author: targetUserId });
         for (const post of postsToDelete) {
-            // პოსტის ქავერ სურათის წაშლა Cloudinary-დან, თუ ის არსებობს
+            
             if (post.coverImage) {
                 const publicIdMatch = post.coverImage.match(/\/blog-app-uploads\/([^.]+)/);
                 if (publicIdMatch && publicIdMatch[1]) {
@@ -219,9 +216,9 @@ userRouter.delete('/:id', async (req, res) => {
                 }
             }
         }
-        await postModel.deleteMany({ author: targetUserId }); // პოსტების წაშლა
+        await postModel.deleteMany({ author: targetUserId }); 
 
-        // მომხმარებლის წაშლა
+       
         await userModel.findByIdAndDelete(targetUserId);
 
         res.status(200).json({ message: 'მომხმარებელი და მისი პოსტები წარმატებით წაიშალა.' });

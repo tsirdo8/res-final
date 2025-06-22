@@ -1,62 +1,56 @@
-    // models/post.model.js
+
     const mongoose = require('mongoose');
     const Schema = mongoose.Schema;
 
-    /**
-     * კომენტარის სქემა (Comment Schema).
-     * ეს სქემა ჩაშენდება Post სქემაში.
-     */
+
     const commentSchema = new Schema({
         text: {
             type: String,
-            required: true // კომენტარის ტექსტი სავალდებულოა
+            required: true
         },
         author: {
             type: Schema.Types.ObjectId,
-            ref: 'User', // მომხმარებლის მოდელზე მიბმა (ავტორი)
+            ref: 'User', 
             required: true
         },
         createdAt: {
             type: Date,
-            default: Date.now // კომენტარის შექმნის დრო
+            default: Date.now 
         }
     });
 
-    /**
-     * პოსტის სქემა (Post Schema).
-     * განსაზღვრავს მონაცემთა სტრუქტურას, რომელიც ინახება 'posts' კოლექციაში.
-     */                                                                             
+                                                                            
     const postSchema = new Schema({
         title: {
             type: String,
-            required: true // სათაური სავალდებულოა
+            required: true 
         },
         content: {
             type: String,
-            required: true // შინაარსი სავალდებულოა
+            required: true 
         },
         author: {
             type: Schema.Types.ObjectId,
-            ref: 'User', // მომხმარებლის მოდელზე მიბმა (ავტორი)
+            ref: 'User', 
             required: true
         },
         coverImage: {
-            type: String, // ქავერ სურათის URL Cloudinary-დან
-            default: null // ნაგულისხმევად null
+            type: String, 
+            default: null 
         },
         reactions: {
             likes: [{
                 type: Schema.Types.ObjectId,
-                ref: 'User' // მომხმარებლის ID-ები, რომელთაც მოეწონათ
+                ref: 'User' 
             }],
             dislikes: [{
                 type: Schema.Types.ObjectId,
-                ref: 'User' // მომხმარებლის ID-ები, რომელთაც არ მოეწონათ
+                ref: 'User'
             }]
         },
-        comments: [commentSchema] // კომენტარების მასივი (ჩაშენებული დოკუმენტები)
+        comments: [commentSchema] 
     }, {
-        timestamps: true // ავტომატურად ამატებს createdAt და updatedAt ველებს
+        timestamps: true 
     });
 
     module.exports = mongoose.model('Post', postSchema);
